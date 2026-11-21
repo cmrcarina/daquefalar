@@ -163,10 +163,19 @@ export async function montarPlano(link) {
 
   if (!posts.length) throw new ErroPedido(["Nenhum post pôde ser importado.", ...avisos].join(" "));
 
+  // Foto de perfil: link de uma imagem do Drive na linha "Foto de perfil (link)"
+  let avatar = "";
+  const fotoTexto = P("foto de perfil");
+  if (fotoTexto) {
+    const fotoId = idDe(fotoTexto);
+    if (fotoId) avatar = reg({ id: fotoId, nome: "perfil.jpg" });
+    else avisos.push('A "Foto de perfil (link)" não tem um link válido do Drive: ficou o círculo com as iniciais.');
+  }
+
   const dados = {
     codigo: P("codigo"), agencia: "daquefalar",
     cliente: {
-      nome: P("cliente"), handle: P("handle").replace(/^@/, ""), categoria: P("categoria"), bio: P("bio"), link: P("link"),
+      nome: P("cliente"), handle: P("handle").replace(/^@/, ""), avatar, categoria: P("categoria"), bio: P("bio"), link: P("link"),
       publicacoes: P("publicacoes"), seguidores: P("seguidores"), aSeguir: P("a seguir"),
     },
     mes: P("mes"), rede: P("rede") || "instagram", prazoAprovacao: dataISO(P("prazo")) || undefined,

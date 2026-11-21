@@ -157,6 +157,7 @@ async function importar(link){
   }
   const t=v=>mapa[v]||v,d=p.dados;
   d.posts.forEach(q=>{q.capa=t(q.capa);q.slides=q.slides.map(t);q.video=t(q.video)});
+  if(d.cliente.avatar)d.cliente.avatar=t(d.cliente.avatar);
   estadoImp('A criar a entrega…');
   const g=await api('/api/admin/entregas',{method:'POST',body:JSON.stringify(d)});
   const r=g.resumo;

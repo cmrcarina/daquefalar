@@ -70,7 +70,8 @@ O que a plataforma faz:
 2. Fica só com os posts em estado **Revisto** ou seguinte. Os que estão em Planeado, Copy feito ou Design feito ficam de fora.
 3. Encontra a pasta de cada post dentro da **Pasta do mês (link)**, pelo nome que começa com o ID (ex.: `ATL-2612-03 Peça da semana`). Também aceita o link da pasta na coluna "Pasta no Drive".
 4. Usa a subpasta de versão mais alta (`v1`, `v2`…) e os ficheiros por ordem de nome (`01.jpg`, `02.jpg`…). Nos reels, usa `capa.jpg` e o vídeo.
-5. Copia as imagens e os vídeos para a plataforma, em partes de 4 MB, e cria ou atualiza a entrega. O link do cliente mantém-se.
+5. Vai buscar a foto de perfil ao link da linha **Foto de perfil (link)** do separador Perfil (ex.: `00 Marca/perfil.jpg`). Para mudar a foto, troca a imagem no Drive, cola o link novo e importa outra vez.
+6. Copia as imagens e os vídeos para a plataforma, em partes de 4 MB, e cria ou atualiza a entrega. O link do cliente mantém-se.
 
 Requisitos:
 - A pasta `daquefalar` tem de estar partilhada com **Qualquer pessoa com o link (Leitor)**. É provisório: mais tarde passa a acesso privado, através de uma conta de serviço.
