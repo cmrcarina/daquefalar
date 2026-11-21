@@ -61,7 +61,22 @@ Quando um cliente envia as respostas, a plataforma faz POST para lá com:
 
 ---
 
-## 2. Como funciona uma entrega
+## 2. Criar uma entrega a partir do Google Drive
+
+No painel, em **Nova entrega a partir do Drive**, cola o link do plano do mês e carrega em **Importar**.
+
+O que a plataforma faz:
+1. Lê o separador **Perfil** (2.º separador) e o separador **Posts** (1.º separador) do plano.
+2. Fica só com os posts em estado **Revisto** ou seguinte. Os que estão em Planeado, Copy feito ou Design feito ficam de fora.
+3. Encontra a pasta de cada post dentro da **Pasta do mês (link)**, pelo nome que começa com o ID (ex.: `ATL-2612-03 Peça da semana`). Também aceita o link da pasta na coluna "Pasta no Drive".
+4. Usa a subpasta de versão mais alta (`v1`, `v2`…) e os ficheiros por ordem de nome (`01.jpg`, `02.jpg`…). Nos reels, usa `capa.jpg` e o vídeo.
+5. Copia as imagens e os vídeos para a plataforma, em partes de 4 MB, e cria ou atualiza a entrega. O link do cliente mantém-se.
+
+Requisitos:
+- A pasta `daquefalar` tem de estar partilhada com **Qualquer pessoa com o link (Leitor)**. É provisório: mais tarde passa a acesso privado, através de uma conta de serviço.
+- Opcional: a variável `GOOGLE_API_KEY` (uma chave da Google Cloud com a API do Drive ativa) faz a plataforma usar a API oficial para listar as pastas. Usa-a se a importação disser que não consegue ler uma pasta.
+
+## 3. Como funciona uma entrega
 
 - Cada entrega é **um cliente num mês**, identificada por um `codigo` (ex.: `ATL-2612`).
 - Ao criar uma entrega, a plataforma gera um **link secreto** (`/e/<token>`). Só quem tem o link vê o conteúdo.
@@ -74,7 +89,7 @@ Quando um cliente envia as respostas, a plataforma faz POST para lá com:
 
 ---
 
-## 3. Para as skills
+## 4. Para as skills
 
 ### Configuração
 No ambiente onde a skill corre:
@@ -167,7 +182,7 @@ Todas as chamadas de administração levam o cabeçalho `Authorization: Bearer <
 
 ---
 
-## 4. Segurança e limites
+## 5. Segurança e limites
 - Os clientes só têm acesso pelo link secreto (32 caracteres aleatórios), e cada link abre só a sua entrega.
 - Os clientes só conseguem gravar respostas. Não alteram o conteúdo nem veem outras entregas.
 - As imagens e os vídeos são servidos por endereços impossíveis de adivinhar, mas não são privados: quem tiver o endereço de um ficheiro consegue abri-lo.

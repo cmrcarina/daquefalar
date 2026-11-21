@@ -56,6 +56,9 @@ input:focus{outline:none;border-color:var(--plum);box-shadow:0 0 0 3px rgba(106,
 .posts .c b{color:var(--plum)}
 .tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
 .empty{color:var(--soft);text-align:center;padding:40px 0}
+.import{margin-bottom:18px}.import h2{font-size:22px;margin-bottom:4px}.import p{margin:0 0 14px;color:var(--soft);font-size:14px}
+.import form{display:flex;gap:8px;flex-wrap:wrap}.import input{flex:1 1 320px}
+.prog-imp{margin-top:12px;font-size:14px}.prog-imp.erro{color:#8a2f2f}.prog-imp ul{margin:6px 0 0;padding-left:18px;color:var(--soft);font-size:13px}
 .toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;background:var(--brown);color:var(--card);padding:12px 20px;border-radius:14px;font-size:14px;transition:all .3s;pointer-events:none;max-width:92vw}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 @media (max-width:760px){.row{grid-template-columns:minmax(0,1fr) auto}.row .when,.row .prog{grid-column:1/-1}.row .acts{grid-row:1;grid-column:2}}
@@ -71,7 +74,7 @@ const $=s=>document.querySelector(s);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const fmt=d=>d?new Intl.DateTimeFormat('pt-PT',{day:'numeric',month:'short'}).format(new Date(d.length===10?d+'T12:00:00':d)):'—';
 const fmtH=d=>new Intl.DateTimeFormat('pt-PT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(d));
-const S={chave:'',lista:[],aberto:null,det:null};
+const S={chave:'',lista:[],aberto:null,det:null,imp:{link:'',msg:'',erro:false,avisos:[],busy:false}};
 try{S.chave=sessionStorage.getItem('dqf-chave')||localStorage.getItem('dqf-chave')||''}catch(e){}
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),3500)}
 async function api(path,opt={}){
@@ -102,6 +105,11 @@ function render(){
  const L=S.lista;
  $('#app').innerHTML=`<header><div><div class="mark">DAQUEFALAR</div><h1>Entregas</h1></div>
   <div class="actions"><button class="btn ghost" id="demo">Criar entrega de exemplo</button><button class="btn ghost" id="refresh">Atualizar</button><button class="btn ghost" id="sair">Sair</button></div></header>
+  <section class="card import"><h2>Nova entrega a partir do Drive</h2>
+   <p>Cole o link do plano do mês (Google Sheets). Entram os posts com estado Revisto ou seguinte, com a versão mais recente de cada pasta.</p>
+   <form id="impForm"><input type="text" id="impLink" placeholder="https://docs.google.com/spreadsheets/d/…" value="${esc(S.imp.link)}" ${S.imp.busy?'disabled':''} required>
+   <button class="btn main" ${S.imp.busy?'disabled':''}>${S.imp.busy?'A importar…':'Importar'}</button></form>
+   ${S.imp.msg?`<div class="prog-imp${S.imp.erro?' erro':''}" role="status">${esc(S.imp.msg)}${S.imp.avisos.length?`<ul>${S.imp.avisos.map(a=>`<li>${esc(a)}</li>`).join('')}</ul>`:''}</div>`:''}</section>
   <div class="list">${L.length?L.map(e=>{const n=e.posts||1;return`<article class="card"><div class="row">
    <div class="who"><b>${esc(e.cliente)}${e.exemplo?' <small>(exemplo)</small>':''}</b><small>@${esc(e.handle)} · ${esc(e.codigo)}</small></div>
    <div class="when"><b style="font-weight:500">${esc(e.mes)}</b><br><small>Prazo: ${fmt(e.prazo)}</small></div>
@@ -134,6 +142,30 @@ document.addEventListener('click',async e=>{
    S.det=await api('/api/admin/entregas/'+S.aberto,{method:'PATCH',body:b.dataset.patch});await carregar();toast('Feito.')}
  }catch(er){if(S.chave)toast(er.message)}
 });
+function estadoImp(msg,extra={}){Object.assign(S.imp,{msg,...extra});const el=document.querySelector('.prog-imp');if(el&&!extra.render){el.firstChild.textContent=msg}else render()}
+async function importar(link){
+ S.imp={link,msg:'A ler o plano e as pastas do Drive…',erro:false,avisos:[],busy:true};render();
+ try{
+  const p=await api('/api/admin/drive/plano',{method:'POST',body:JSON.stringify({planilha:link})});
+  const mapa={};let i=0;
+  for(const f of p.ficheiros){
+   i++;estadoImp(`A copiar ficheiros do Drive: ${i} de ${p.ficheiros.length} (${f.nome})`);
+   let r=await api('/api/admin/drive/ficheiro',{method:'POST',body:JSON.stringify({id:f.id,nome:f.nome,parte:0})});
+   while(!r.completo){estadoImp(`A copiar ficheiros do Drive: ${i} de ${p.ficheiros.length} (${f.nome}, parte ${r.parte+2} de ${r.partes})`);
+    r=await api('/api/admin/drive/ficheiro',{method:'POST',body:JSON.stringify({id:f.id,nome:f.nome,parte:r.parte+1})})}
+   mapa['drive:'+f.id]=r.url;
+  }
+  const t=v=>mapa[v]||v,d=p.dados;
+  d.posts.forEach(q=>{q.capa=t(q.capa);q.slides=q.slides.map(t);q.video=t(q.video)});
+  estadoImp('A criar a entrega…');
+  const g=await api('/api/admin/entregas',{method:'POST',body:JSON.stringify(d)});
+  const r=g.resumo;
+  await carregar();S.aberto=g.id;S.det=await api('/api/admin/entregas/'+g.id);
+  S.imp={link:'',busy:false,erro:false,avisos:p.avisos,msg:`Entrega ${g.codigo} pronta: ${d.posts.length} posts (${r.novos} novos, ${r.novasVersoes} com nova versão, ${r.iguais} sem alterações). O link para o cliente está no detalhe abaixo.`};
+  render();
+ }catch(e){S.imp={link,busy:false,erro:true,avisos:[],msg:e.message||'Não foi possível importar.'};if(S.chave)render()}
+}
+document.addEventListener('submit',e=>{if(e.target.id==='impForm'){e.preventDefault();const v=document.querySelector('#impLink').value.trim();if(v)importar(v)}});
 S.chave?carregar().catch(()=>{}):login();
 }
 </script>
