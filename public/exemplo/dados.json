@@ -1,0 +1,191 @@
+{
+ "codigo": "EXEMPLO-ATL-2612",
+ "agencia": "daquefalar",
+ "cliente": {
+  "nome": "Atelier Lume",
+  "handle": "atelierlume",
+  "avatar": "",
+  "categoria": "Estúdio de cerâmica",
+  "bio": "Cerâmica feita à mão em Lisboa 🏺\nPeças únicas, loiça de autor e workshops de torno\n📍 Rua das Gaivotas, Bica\n✉️ Encomendas por mensagem",
+  "link": "atelierlume.pt",
+  "publicacoes": 186,
+  "seguidores": "12,4 mil",
+  "aSeguir": 402
+ },
+ "mes": "Dezembro 2026",
+ "rede": "instagram",
+ "prazoAprovacao": "2026-11-28",
+ "exemplo": true,
+ "posts": [
+  {
+   "id": "ATL-2612-01",
+   "numero": 1,
+   "tipo": "carrossel",
+   "rotulo": "Guia de presentes",
+   "dataPublicacao": "2026-12-01",
+   "versao": 1,
+   "alteracoes": "",
+   "capa": "/exemplo/media/ATL-2612-01-1.jpg",
+   "slides": [
+    "/exemplo/media/ATL-2612-01-1.jpg",
+    "/exemplo/media/ATL-2612-01-2.jpg",
+    "/exemplo/media/ATL-2612-01-3.jpg",
+    "/exemplo/media/ATL-2612-01-4.jpg",
+    "/exemplo/media/ATL-2612-01-5.jpg"
+   ],
+   "video": "",
+   "legenda": "O guia de presentes deste ano já está pronto 🎁\n\nSeparámos as peças por pessoa: quem cozinha, quem recebe e quem coleciona. Tudo feito à mão no nosso atelier, em Lisboa.\n\nEncomendas até 15 de dezembro, com envio gratuito.\n\n#atelierlume #ceramicaportuguesa #presentesdenatal #feitoamao"
+  },
+  {
+   "id": "ATL-2612-02",
+   "numero": 2,
+   "tipo": "reel",
+   "rotulo": "No torno",
+   "dataPublicacao": "2026-12-03",
+   "versao": 1,
+   "alteracoes": "",
+   "capa": "/exemplo/media/ATL-2612-02-capa.jpg",
+   "slides": [],
+   "video": "/exemplo/media/ATL-2612-02.mp4",
+   "legenda": "Uma taça, do primeiro toque ao acabamento ✨\n\nSom ligado para ouvir o torno.\n\n#atelierlume #ceramica #processo #wheelthrowing"
+  },
+  {
+   "id": "ATL-2612-03",
+   "numero": 3,
+   "tipo": "imagem",
+   "rotulo": "Peça da semana",
+   "dataPublicacao": "2026-12-05",
+   "versao": 1,
+   "alteracoes": "",
+   "capa": "/exemplo/media/ATL-2612-03.jpg",
+   "slides": [
+    "/exemplo/media/ATL-2612-03.jpg"
+   ],
+   "video": "",
+   "legenda": "Peça da semana: a jarra Maré nº 7 🌿\n\nVidrado verde-oliva, feita numa só sessão de torno e queimada a 1240 °C. Há apenas uma.\n\nDisponível na loja online, link na bio.\n\n#atelierlume #pecaunica #ceramicaportuguesa"
+  },
+  {
+   "id": "ATL-2612-04",
+   "numero": 4,
+   "tipo": "carrossel",
+   "rotulo": "Cuidar da cerâmica",
+   "dataPublicacao": "2026-12-08",
+   "versao": 2,
+   "alteracoes": "Slide 2 com o novo texto sobre a máquina da loiça. Capa com mais contraste.",
+   "capa": "/exemplo/media/ATL-2612-04-1.jpg",
+   "slides": [
+    "/exemplo/media/ATL-2612-04-1.jpg",
+    "/exemplo/media/ATL-2612-04-2.jpg",
+    "/exemplo/media/ATL-2612-04-3.jpg",
+    "/exemplo/media/ATL-2612-04-4.jpg"
+   ],
+   "video": "",
+   "legenda": "Guarda este post para mais tarde 📌\n\nRespondemos às três perguntas que mais nos fazem sobre cuidar da cerâmica. Tens outra dúvida? Deixa nos comentários.\n\n#atelierlume #dicasdecasa #ceramica"
+  },
+  {
+   "id": "ATL-2612-05",
+   "numero": 5,
+   "tipo": "imagem",
+   "rotulo": "Workshop de sábado",
+   "dataPublicacao": "2026-12-10",
+   "versao": 1,
+   "alteracoes": "",
+   "capa": "/exemplo/media/ATL-2612-05.jpg",
+   "slides": [
+    "/exemplo/media/ATL-2612-05.jpg"
+   ],
+   "video": "",
+   "legenda": "Últimos lugares para o workshop de torno de dia 19 🏺\n\nTrês horas, oito pessoas, uma taça tua para levar para casa (depois de cozida). Não é preciso experiência.\n\nInscrições pelo link na bio.\n\n#atelierlume #workshoplisboa #ceramica"
+  },
+  {
+   "id": "ATL-2612-06",
+   "numero": 6,
+   "tipo": "reel",
+   "rotulo": "Bastidores do forno",
+   "dataPublicacao": "2026-12-12",
+   "versao": 1,
+   "alteracoes": "",
+   "capa": "/exemplo/media/ATL-2612-06-capa.jpg",
+   "slides": [],
+   "video": "/exemplo/media/ATL-2612-06.mp4",
+   "legenda": "O momento mais nervoso do mês: abrir o forno 🔥\n\nO que achas desta fornada?\n\n#atelierlume #bastidores #kilnopening"
+  },
+  {
+   "id": "ATL-2612-07",
+   "numero": 7,
+   "tipo": "carrossel",
+   "rotulo": "Feira de Natal",
+   "dataPublicacao": "2026-12-15",
+   "versao": 1,
+   "alteracoes": "",
+   "capa": "/exemplo/media/ATL-2612-07-1.jpg",
+   "slides": [
+    "/exemplo/media/ATL-2612-07-1.jpg",
+    "/exemplo/media/ATL-2612-07-2.jpg",
+    "/exemplo/media/ATL-2612-07-3.jpg"
+   ],
+   "video": "",
+   "legenda": "Este fim de semana estamos na Feira de Natal da LX Factory 🎄\n\nTrazemos peças que não vão estar online. Passa para dizer olá!\n\n@lxfactory\n#atelierlume #feiradenatal #lisboa"
+  },
+  {
+   "id": "ATL-2612-08",
+   "numero": 8,
+   "tipo": "imagem",
+   "rotulo": "Últimas encomendas",
+   "dataPublicacao": "2026-12-17",
+   "versao": 1,
+   "alteracoes": "",
+   "capa": "/exemplo/media/ATL-2612-08.jpg",
+   "slides": [
+    "/exemplo/media/ATL-2612-08.jpg"
+   ],
+   "video": "",
+   "legenda": "Último aviso 📦\n\nEncomendas feitas até dia 18 chegam a tempo do Natal em Portugal continental.\n\n#atelierlume #compraslocais #presentesdenatal"
+  },
+  {
+   "id": "ATL-2612-09",
+   "numero": 9,
+   "tipo": "carrossel",
+   "rotulo": "Balanço do ano",
+   "dataPublicacao": "2026-12-22",
+   "versao": 1,
+   "alteracoes": "",
+   "capa": "/exemplo/media/ATL-2612-09-1.jpg",
+   "slides": [
+    "/exemplo/media/ATL-2612-09-1.jpg",
+    "/exemplo/media/ATL-2612-09-2.jpg",
+    "/exemplo/media/ATL-2612-09-3.jpg",
+    "/exemplo/media/ATL-2612-09-4.jpg",
+    "/exemplo/media/ATL-2612-09-5.jpg"
+   ],
+   "video": "",
+   "legenda": "Obrigada por este ano 🤍\n\nPeças, workshops, uma loja nova e muita gente bonita pelo caminho. Até 2027!\n\n#atelierlume #balancodoano #obrigada"
+  }
+ ],
+ "publicados": [
+  {
+   "capa": "/exemplo/media/pub-1.jpg",
+   "tipo": "imagem"
+  },
+  {
+   "capa": "/exemplo/media/pub-2.jpg",
+   "tipo": "imagem"
+  },
+  {
+   "capa": "/exemplo/media/pub-3.jpg",
+   "tipo": "carrossel"
+  },
+  {
+   "capa": "/exemplo/media/pub-4.jpg",
+   "tipo": "imagem"
+  },
+  {
+   "capa": "/exemplo/media/pub-5.jpg",
+   "tipo": "imagem"
+  },
+  {
+   "capa": "/exemplo/media/pub-6.jpg",
+   "tipo": "carrossel"
+  }
+ ]
+}

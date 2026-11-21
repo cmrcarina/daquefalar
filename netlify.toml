@@ -1,0 +1,25 @@
+# Configuração da Netlify — daquefalar · Plataforma de aprovação
+[build]
+  publish = "public"
+
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# Link secreto de cada entrega: /e/<token> abre a página de aprovação
+[[redirects]]
+  from = "/e/*"
+  to = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/painel"
+  to = "/painel.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Robots-Tag = "noindex, nofollow"
+    Referrer-Policy = "no-referrer"
+    X-Content-Type-Options = "nosniff"

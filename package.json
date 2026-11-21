@@ -1,0 +1,10 @@
+{
+  "name": "daquefalar-aprovacao",
+  "private": true,
+  "type": "module",
+  "description": "Plataforma de aprovação de conteúdo da daquefalar",
+  "dependencies": {
+    "@netlify/blobs": "^11.1.9",
+    "@netlify/database": "^2.0.3"
+  }
+}

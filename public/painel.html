@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="pt-PT">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Painel · daquefalar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+/* VOICE: o escritório da agência — sóbrio, rápido de ler.
+   IDEA: um livro de registo das entregas, uma linha por cliente e mês.
+   PICTURE: a lista de entregas com o progresso de cada uma.
+   COLOUR and TYPE: as cores da daquefalar; Playfair nos títulos, Poppins no resto.
+   LAYOUT: uma coluna, lista em cima, detalhe a abrir por baixo de cada linha. */
+:root{color-scheme:light;--brown:#301a05;--cream:#ede4d6;--card:#f6f0e7;--plum:#6a445b;--lilac:#ac87a7;--line:rgba(48,26,5,.12);--soft:rgba(48,26,5,.62)}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--cream);color:var(--brown);font:15px/1.55 Poppins,system-ui,sans-serif}
+h1,h2,h3{font-family:"Playfair Display",Georgia,serif;font-weight:600;margin:0;line-height:1.15}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;border:0;background:none;padding:0}
+:focus-visible{outline:2px solid var(--plum);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1040px;margin:0 auto;padding:clamp(20px,4vw,48px) max(4vw,16px) 80px}
+.mark{font-weight:500;font-size:12px;letter-spacing:.32em}
+header{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:28px}
+header h1{font-size:clamp(30px,4vw,44px);margin-top:10px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+.btn{text-decoration:none;color:inherit;display:inline-flex;align-items:center;justify-content:center;gap:6px;min-height:44px;padding:0 18px;border-radius:999px;font-weight:500;font-size:14px;white-space:nowrap}
+.btn.main{background:var(--plum);color:var(--card)}.btn.main:hover{background:#5a3a4d}
+.btn.ghost{border:1px solid rgba(48,26,5,.25)}.btn.ghost:hover{border-color:var(--plum);color:var(--plum)}
+.btn.sm{min-height:36px;padding:0 14px;font-size:13px}
+.btn[disabled]{opacity:.4;pointer-events:none}
+.card{background:var(--card);border-radius:20px;padding:22px 24px}
+.login{max-width:440px;margin:12vh auto 0}
+.login h1{font-size:34px;margin:10px 0 8px}.login p{color:var(--soft);margin:0 0 18px}
+label{font-size:13px;font-weight:500;display:block;margin-bottom:6px}
+input[type=password],input[type=text]{width:100%;font-size:16px;padding:11px 14px;border-radius:12px;border:1px solid rgba(48,26,5,.2);background:#fffaf3}
+input:focus{outline:none;border-color:var(--plum);box-shadow:0 0 0 3px rgba(106,68,91,.15)}
+.check{display:flex;gap:8px;align-items:center;font-size:13px;margin:12px 0 18px;font-weight:400}
+.msg{font-size:13px;color:#8a2f2f;min-height:20px;margin:8px 0 0}
+.list{display:flex;flex-direction:column;gap:10px}
+.row{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,.9fr) minmax(0,1.3fr) auto;gap:18px;align-items:center}
+.row .who b{display:block;font-weight:500}.row .who small,.row .when small{color:var(--soft);font-size:13px}
+.bar{display:flex;height:6px;border-radius:9px;background:rgba(48,26,5,.08);overflow:hidden;margin-top:6px}
+.bar i{display:block}.ok{background:var(--plum)}.alt{background:var(--lilac)}
+.pill{display:inline-block;font-size:12px;font-weight:500;padding:2px 10px;border-radius:99px;background:rgba(48,26,5,.07)}
+.pill.sent{background:var(--plum);color:var(--card)}.pill.off{background:transparent;border:1px solid var(--line);color:var(--soft)}
+.det{margin-top:18px;padding-top:18px;border-top:1px solid var(--line)}
+.linkbox{display:flex;gap:8px;margin-bottom:16px}.linkbox input{font-size:13px}
+.posts{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px}
+.posts li{display:grid;grid-template-columns:44px minmax(0,1fr);gap:12px;align-items:start;background:var(--cream);border-radius:12px;padding:10px}
+.posts img{width:44px;aspect-ratio:3/4;object-fit:cover;border-radius:6px}
+.posts b{font-weight:500}.posts small{color:var(--soft);font-size:12px}
+.posts .c{font-size:13px;margin:4px 0 0;padding:0;list-style:none}.posts .c li{display:block;background:none;padding:2px 0}
+.posts .c b{color:var(--plum)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.empty{color:var(--soft);text-align:center;padding:40px 0}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);opacity:0;background:var(--brown);color:var(--card);padding:12px 20px;border-radius:14px;font-size:14px;transition:all .3s;pointer-events:none;max-width:92vw}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+@media (max-width:760px){.row{grid-template-columns:minmax(0,1fr) auto}.row .when,.row .prog{grid-column:1/-1}.row .acts{grid-row:1;grid-column:2}}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+<div class="wrap" id="app"></div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+{
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const fmt=d=>d?new Intl.DateTimeFormat('pt-PT',{day:'numeric',month:'short'}).format(new Date(d.length===10?d+'T12:00:00':d)):'—';
+const fmtH=d=>new Intl.DateTimeFormat('pt-PT',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}).format(new Date(d));
+const S={chave:'',lista:[],aberto:null,det:null};
+try{S.chave=sessionStorage.getItem('dqf-chave')||localStorage.getItem('dqf-chave')||''}catch(e){}
+function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(toast.h);toast.h=setTimeout(()=>t.classList.remove('on'),3500)}
+async function api(path,opt={}){
+ const r=await fetch(path,{...opt,headers:{'authorization':'Bearer '+S.chave,'content-type':'application/json',...(opt.headers||{})}});
+ const d=await r.json().catch(()=>({}));
+ if(r.status===401){S.chave='';try{sessionStorage.removeItem('dqf-chave');localStorage.removeItem('dqf-chave')}catch(e){};login(d.erro);throw new Error(d.erro)}
+ if(!r.ok)throw new Error(d.erro||'Erro '+r.status);
+ return d;
+}
+function login(msg){
+ $('#app').innerHTML=`<form class="card login" id="f"><div class="mark">DAQUEFALAR</div><h1>Painel</h1>
+  <p>Introduza a chave de administração (a variável ADMIN_TOKEN que definiu na Netlify).</p>
+  <label for="k">Chave</label><input type="password" id="k" autocomplete="current-password" required>
+  <label class="check"><input type="checkbox" id="lembrar"> Lembrar neste computador</label>
+  <button class="btn main" style="width:100%">Entrar</button><p class="msg">${esc(msg||'')}</p></form>`;
+ $('#k').focus();
+ $('#f').addEventListener('submit',async e=>{e.preventDefault();S.chave=$('#k').value.trim();
+  try{(($('#lembrar').checked)?localStorage:sessionStorage).setItem('dqf-chave',S.chave)}catch(er){}
+  try{await carregar()}catch(er){}});
+}
+async function carregar(){const d=await api('/api/admin/entregas');S.lista=d.entregas;render()}
+function estado(e){
+ if(!e.ativo)return'<span class="pill off">Link desativado</span>';
+ if(e.envio)return`<span class="pill sent">Enviado a ${fmtH(e.envio.data)}</span>`;
+ return'<span class="pill">À espera do cliente</span>';
+}
+function render(){
+ const L=S.lista;
+ $('#app').innerHTML=`<header><div><div class="mark">DAQUEFALAR</div><h1>Entregas</h1></div>
+  <div class="actions"><button class="btn ghost" id="demo">Criar entrega de exemplo</button><button class="btn ghost" id="refresh">Atualizar</button><button class="btn ghost" id="sair">Sair</button></div></header>
+  <div class="list">${L.length?L.map(e=>{const n=e.posts||1;return`<article class="card"><div class="row">
+   <div class="who"><b>${esc(e.cliente)}${e.exemplo?' <small>(exemplo)</small>':''}</b><small>@${esc(e.handle)} · ${esc(e.codigo)}</small></div>
+   <div class="when"><b style="font-weight:500">${esc(e.mes)}</b><br><small>Prazo: ${fmt(e.prazo)}</small></div>
+   <div class="prog"><small>${e.aprovados} de ${e.posts} aprovados${e.alteracoes?` · ${e.alteracoes} com alterações`:''}</small>
+    <div class="bar"><i class="ok" style="width:${e.aprovados/n*100}%"></i><i class="alt" style="width:${e.alteracoes/n*100}%"></i></div><div style="margin-top:6px">${estado(e)}</div></div>
+   <div class="acts"><button class="btn ghost sm" data-ver="${e.id}" aria-expanded="${S.aberto===e.id}">${S.aberto===e.id?'Fechar':'Detalhe'}</button></div></div>
+   ${S.aberto===e.id&&S.det?detalhe(S.det):''}</article>`}).join(''):'<div class="card empty">Ainda não há entregas. Crie a de exemplo para experimentar, ou envie a primeira com a skill.</div>'}</div>`;
+}
+function detalhe(d){
+ const resp=d.respostas||{};
+ return`<div class="det"><label for="lnk">Link para o cliente</label><div class="linkbox"><input type="text" id="lnk" readonly value="${esc(d.link)}"><button class="btn main sm" id="copiar">Copiar</button><a class="btn ghost sm" href="${esc(d.link)}" target="_blank" rel="noopener">Abrir</a></div>
+  <ul class="posts">${d.posts.map(p=>{const r=resp[p.id];const atual=r&&r.versao===p.versao;
+   const est=!atual?'Por rever':r.decisao==='aprovado'?'✓ Aprovado':'Alterações pedidas';
+   return`<li><img src="${esc(p.capa)}" alt=""><div><b>${p.numero}. ${esc(p.rotulo)}</b> <small>· ${esc(p.id)} · v${p.versao} · ${fmt(p.dataPublicacao)}</small><br><small style="color:${atual&&r.decisao==='alteracoes'?'var(--plum)':'var(--soft)'};font-weight:500">${est}${atual?' · '+fmtH(r.data):''}</small>
+    ${atual&&r.comentarios.length?`<ul class="c">${r.comentarios.map(c=>`<li><b>${esc(c.slide)}:</b> ${esc(c.texto)}</li>`).join('')}</ul>`:''}</div></li>`}).join('')}</ul>
+  <div class="tools"><button class="btn ghost sm" data-patch='{"ativo":${!d.ativo}}'>${d.ativo?'Desativar link':'Reativar link'}</button>
+   <button class="btn ghost sm" data-patch='{"novoLink":true}' data-confirma="O link atual deixa de funcionar. Gerar um novo?">Gerar link novo</button>
+   ${d.envio?`<button class="btn ghost sm" data-patch='{"reabrir":true}' data-confirma="O cliente volta a poder mudar as respostas. Continuar?">Reabrir respostas</button>`:''}</div></div>`;
+}
+document.addEventListener('click',async e=>{
+ const b=e.target.closest('button');if(!b)return;
+ try{
+  if(b.id==='refresh'){await carregar();if(S.aberto)S.det=await api('/api/admin/entregas/'+S.aberto);render();toast('Atualizado.')}
+  else if(b.id==='sair'){try{sessionStorage.removeItem('dqf-chave');localStorage.removeItem('dqf-chave')}catch(er){};S.chave='';login()}
+  else if(b.id==='demo'){b.disabled=true;const d=await api('/api/admin/demo',{method:'POST'});await carregar();S.aberto=d.id;S.det=await api('/api/admin/entregas/'+d.id);render();toast('Entrega de exemplo pronta.')}
+  else if(b.dataset.ver){const id=+b.dataset.ver;if(S.aberto===id){S.aberto=null;S.det=null}else{S.aberto=id;S.det=await api('/api/admin/entregas/'+id)}render()}
+  else if(b.id==='copiar'){const i=$('#lnk');try{await navigator.clipboard.writeText(i.value);toast('Link copiado.')}catch(er){i.select();toast('Selecionado: copie com Ctrl+C / Cmd+C.')}}
+  else if(b.dataset.patch){
+   if(b.dataset.confirma&&b.dataset.ok!=='1'){b.dataset.ok='1';b.textContent='Confirmar?';toast(b.dataset.confirma);return}
+   S.det=await api('/api/admin/entregas/'+S.aberto,{method:'PATCH',body:b.dataset.patch});await carregar();toast('Feito.')}
+ }catch(er){if(S.chave)toast(er.message)}
+});
+S.chave?carregar().catch(()=>{}):login();
+}
+</script>
+</body>
+</html>
