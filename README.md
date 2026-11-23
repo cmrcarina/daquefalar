@@ -77,6 +77,27 @@ Requisitos:
 - A pasta `daquefalar` tem de estar partilhada com **Qualquer pessoa com o link (Leitor)**. É provisório: mais tarde passa a acesso privado, através de uma conta de serviço.
 - Opcional: a variável `GOOGLE_API_KEY` (uma chave da Google Cloud com a API do Drive ativa) faz a plataforma usar a API oficial para listar as pastas. Usa-a se a importação disser que não consegue ler uma pasta.
 
+## 2.1 Escrever as respostas no plano do mês (Google Sheets)
+
+Quando o cliente carrega em **Enviar respostas à agência**, a plataforma escreve no plano do mês:
+- na coluna **Estado** de cada post: `Aprovado` ou `Alterações`;
+- numa coluna **Comentários do cliente** (criada sozinha no fim do separador Posts): os comentários da versão atual, com a versão e a hora;
+- num separador **Respostas** (criado sozinho): uma linha por comentário, como histórico.
+
+Ao importar uma entrega, os posts novos ou com nova versão passam a `Enviado ao cliente` no plano.
+Se a escrita falhar, o envio do cliente não falha: o painel mostra o erro e o botão **Escrever respostas no plano** tenta outra vez.
+
+Configurar (uma vez):
+1. Em https://console.cloud.google.com, cria um projeto (ex.: `daquefalar`).
+2. Em **APIs e serviços → Biblioteca**, ativa a **Google Sheets API**.
+3. Em **IAM e administração → Contas de serviço**, cria uma conta de serviço (ex.: `daquefalar-plataforma`). Não precisa de funções.
+4. Abre a conta de serviço → **Chaves → Adicionar chave → Criar nova chave → JSON**. Descarrega o ficheiro e guarda-o num gestor de passwords.
+5. Na Netlify: **Project configuration → Environment variables → Add a variable**. Nome: `GOOGLE_SERVICE_ACCOUNT`. Valor: o conteúdo inteiro do ficheiro JSON. Marca-a como secreta.
+6. No Google Drive, partilha a pasta `Clientes` com o email da conta de serviço (o `client_email` do JSON, termina em `iam.gserviceaccount.com`) como **Editor**.
+7. **Deploys → Trigger deploy → Deploy project**.
+
+As entregas criadas antes desta versão não sabem qual é o seu plano: importa-as outra vez a partir do Drive (o link do cliente mantém-se).
+
 ## 3. Como funciona uma entrega
 
 - Cada entrega é **um cliente num mês**, identificada por um `codigo` (ex.: `ATL-2612`).

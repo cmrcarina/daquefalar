@@ -1,4 +1,5 @@
 // POST /api/entrega/:token/resposta | aprovar-todos | enviar — o cliente responde
+import { sincronizarRespostas } from "../lib/sincronizar.mjs";
 import { db, entregaPorToken, montarEntrega, postsDe, respostasDe, bloqueada, json, erro, lerJson, tratar, env, ErroPedido } from "../lib/comum.mjs";
 
 async function gravar(entregaId, post, decisao, comentarios) {
@@ -59,6 +60,7 @@ export default tratar(async (req, ctx) => {
     const envio = { data: new Date().toISOString(), aprovados, alteracoes: posts.length - aprovados, versoes };
     await db().sql`UPDATE entregas SET envio = ${JSON.stringify(envio)}::jsonb, atualizado_em = now() WHERE id = ${e.id}`;
     e.envio = envio;
+    await sincronizarRespostas(e); // escreve Estado e comentários no plano do mês (não falha o envio)
     await avisarAgencia(e, envio);
   } else {
     return erro("Ação desconhecida.", 404);

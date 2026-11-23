@@ -118,6 +118,12 @@ function render(){
    <div class="acts"><button class="btn ghost sm" data-ver="${e.id}" aria-expanded="${S.aberto===e.id}">${S.aberto===e.id?'Fechar':'Detalhe'}</button></div></div>
    ${S.aberto===e.id&&S.det?detalhe(S.det):''}</article>`}).join(''):'<div class="card empty">Ainda não há entregas. Crie a de exemplo para experimentar, ou envie a primeira com a skill.</div>'}</div>`;
 }
+function planoInfo(d){
+ if(!d.planilha)return'';
+ const z=d.sincronizacao;
+ if(!z)return`<p class="plano"><small>Ligada ao plano do mês. As respostas são escritas no Sheet quando o cliente as enviar.</small></p>`;
+ return`<p class="plano"><small style="color:${z.ok?'var(--soft)':'var(--plum)'};font-weight:500">Plano do mês: ${z.ok?'✓ ':'Não foi possível escrever no plano. '}${esc(z.mensagem||'')} · ${fmtH(z.data)}</small></p>`;
+}
 function detalhe(d){
  const resp=d.respostas||{};
  return`<div class="det"><label for="lnk">Link para o cliente</label><div class="linkbox"><input type="text" id="lnk" readonly value="${esc(d.link)}"><button class="btn main sm" id="copiar">Copiar</button><a class="btn ghost sm" href="${esc(d.link)}" target="_blank" rel="noopener">Abrir</a></div>
@@ -125,8 +131,10 @@ function detalhe(d){
    const est=!atual?'Por rever':r.decisao==='aprovado'?'✓ Aprovado':'Alterações pedidas';
    return`<li><img src="${esc(p.capa)}" alt=""><div><b>${p.numero}. ${esc(p.rotulo)}</b> <small>· ${esc(p.id)} · v${p.versao} · ${fmt(p.dataPublicacao)}</small><br><small style="color:${atual&&r.decisao==='alteracoes'?'var(--plum)':'var(--soft)'};font-weight:500">${est}${atual?' · '+fmtH(r.data):''}</small>
     ${atual&&r.comentarios.length?`<ul class="c">${r.comentarios.map(c=>`<li><b>${esc(c.slide)}:</b> ${esc(c.texto)}</li>`).join('')}</ul>`:''}</div></li>`}).join('')}</ul>
+  ${planoInfo(d)}
   <div class="tools"><button class="btn ghost sm" data-patch='{"ativo":${!d.ativo}}'>${d.ativo?'Desativar link':'Reativar link'}</button>
    <button class="btn ghost sm" data-patch='{"novoLink":true}' data-confirma="O link atual deixa de funcionar. Gerar um novo?">Gerar link novo</button>
+   ${d.planilha&&d.envio?`<button class="btn ghost sm" data-patch='{"sincronizar":true}'>Escrever respostas no plano</button>`:''}
    ${d.envio?`<button class="btn ghost sm" data-patch='{"reabrir":true}' data-confirma="O cliente volta a poder mudar as respostas. Continuar?">Reabrir respostas</button>`:''}</div></div>`;
 }
 document.addEventListener('click',async e=>{
@@ -162,6 +170,7 @@ async function importar(link){
   const g=await api('/api/admin/entregas',{method:'POST',body:JSON.stringify(d)});
   const r=g.resumo;
   await carregar();S.aberto=g.id;S.det=await api('/api/admin/entregas/'+g.id);
+  if(g.plano&&!g.plano.ok)p.avisos.push('Plano do mês: '+g.plano.mensagem);
   S.imp={link:'',busy:false,erro:false,avisos:p.avisos,msg:`Entrega ${g.codigo} pronta: ${d.posts.length} posts (${r.novos} novos, ${r.novasVersoes} com nova versão, ${r.iguais} sem alterações). O link para o cliente está no detalhe abaixo.`};
   render();
  }catch(e){S.imp={link,busy:false,erro:true,avisos:[],msg:e.message||'Não foi possível importar.'};if(S.chave)render()}

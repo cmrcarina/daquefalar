@@ -3,6 +3,8 @@
 //   POST  /api/admin/entregas           cria ou atualiza uma entrega (mesmo "codigo" = mesmo link)
 //   GET   /api/admin/entregas/:id       detalhe: posts, respostas, histórico e link
 //   PATCH /api/admin/entregas/:id       { "ativo": false } desativa o link · { "novoLink": true } gera um link novo
+//                                       { "sincronizar": true } volta a escrever as respostas no plano do mês
+import { sincronizarRespostas, marcarEnviados } from "../lib/sincronizar.mjs";
 import { db, entregaPorId, montarEntrega, gravarEntrega, novoToken, linkDe, json, erro, lerJson, isAdmin, semAdmin, tratar } from "../lib/comum.mjs";
 
 export default tratar(async (req, ctx) => {
@@ -25,7 +27,8 @@ export default tratar(async (req, ctx) => {
 
   if (!id && req.method === "POST") {
     const r = await gravarEntrega(await lerJson(req, 2_000_000));
-    return json({ ...r, link: linkDe(req, r.token) }, 201);
+    const plano = await marcarEnviados(r.id, r.planilha, r.alterados);
+    return json({ ...r, link: linkDe(req, r.token), plano }, 201);
   }
 
   const e = await entregaPorId(id);
@@ -36,11 +39,13 @@ export default tratar(async (req, ctx) => {
     if (typeof b.ativo === "boolean") await s`UPDATE entregas SET ativo = ${b.ativo}, atualizado_em = now() WHERE id = ${e.id}`;
     if (b.novoLink === true) await s`UPDATE entregas SET token = ${novoToken()}, atualizado_em = now() WHERE id = ${e.id}`;
     if (b.reabrir === true) await s`UPDATE entregas SET envio = NULL, atualizado_em = now() WHERE id = ${e.id}`;
+    if (b.sincronizar === true) await sincronizarRespostas(await entregaPorId(e.id));
   }
   const atual = await entregaPorId(e.id);
   const historico = await s`SELECT post_id AS "postId", versao, decisao, comentarios, data FROM respostas_historico
                             WHERE entrega_id = ${e.id} ORDER BY data DESC LIMIT 500`;
-  return json({ id: atual.id, codigo: atual.codigo, ativo: atual.ativo, link: linkDe(req, atual.token), ...(await montarEntrega(atual)), historico });
+  return json({ id: atual.id, codigo: atual.codigo, ativo: atual.ativo, link: linkDe(req, atual.token),
+    planilha: !!atual.planilha, sincronizacao: atual.sincronizacao, ...(await montarEntrega(atual)), historico });
 });
 
 export const config = { path: ["/api/admin/entregas", "/api/admin/entregas/:id"], method: ["GET", "POST", "PATCH"] };

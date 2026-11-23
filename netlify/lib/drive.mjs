@@ -173,7 +173,7 @@ export async function montarPlano(link) {
   }
 
   const dados = {
-    codigo: P("codigo"), agencia: "daquefalar",
+    codigo: P("codigo"), agencia: "daquefalar", planilha: planilhaId,
     cliente: {
       nome: P("cliente"), handle: P("handle").replace(/^@/, ""), avatar, categoria: P("categoria"), bio: P("bio"), link: P("link"),
       publicacoes: P("publicacoes"), seguidores: P("seguidores"), aSeguir: P("a seguir"),

@@ -66,7 +66,7 @@ export const tratar = (fn) => async (req, ctx) => {
 
 /* ---------- Ler e montar uma entrega ---------- */
 const COLS_ENTREGA = `id, codigo, token, agencia, cliente, mes, rede, to_char(prazo,'YYYY-MM-DD') AS prazo,
-  publicados, exemplo, ativo, envio, criado_em, atualizado_em`;
+  publicados, exemplo, ativo, envio, planilha, sincronizacao, criado_em, atualizado_em`;
 
 export async function entregaPorToken(token) {
   if (!tokenValido(token)) return null;
@@ -153,6 +153,7 @@ export function normalizar(d) {
     codigo, agencia: txt(d.agencia || "daquefalar", 80), cliente, mes: txt(d.mes, 40) || "—",
     rede: txt(d.rede || "instagram", 30), prazo: d.prazoAprovacao ? dataISO(d.prazoAprovacao, "prazoAprovacao") : null,
     exemplo: !!d.exemplo,
+    planilha: /^[A-Za-z0-9_-]{20,100}$/.test(d.planilha || "") ? d.planilha : null,
     publicados: (Array.isArray(d.publicados) ? d.publicados : []).slice(0, 12).map((p) => ({ capa: url(p.capa), tipo: txt(p.tipo, 20) || "imagem" })),
     posts,
   };
@@ -169,17 +170,17 @@ export async function gravarEntrega(dados) {
     await client.query("BEGIN");
     const { rows: [atual] } = await client.query("SELECT id, token FROM entregas WHERE codigo = $1 FOR UPDATE", [d.codigo]);
     let id, token;
-    const vals = [d.agencia, JSON.stringify(d.cliente), d.mes, d.rede, d.prazo, JSON.stringify(d.publicados), d.exemplo];
+    const vals = [d.agencia, JSON.stringify(d.cliente), d.mes, d.rede, d.prazo, JSON.stringify(d.publicados), d.exemplo, d.planilha];
     if (atual) {
       ({ id, token } = atual);
       await client.query(
         `UPDATE entregas SET agencia=$1, cliente=$2::jsonb, mes=$3, rede=$4, prazo=$5, publicados=$6::jsonb, exemplo=$7,
-           ativo=true, atualizado_em=now() WHERE id=$8`, [...vals, id]);
+           planilha=COALESCE($8, planilha), ativo=true, atualizado_em=now() WHERE id=$9`, [...vals, id]);
     } else {
       token = novoToken();
       const r = await client.query(
-        `INSERT INTO entregas (agencia, cliente, mes, rede, prazo, publicados, exemplo, codigo, token)
-         VALUES ($1,$2::jsonb,$3,$4,$5,$6::jsonb,$7,$8,$9) RETURNING id`,
+        `INSERT INTO entregas (agencia, cliente, mes, rede, prazo, publicados, exemplo, planilha, codigo, token)
+         VALUES ($1,$2::jsonb,$3,$4,$5,$6::jsonb,$7,$8,$9,$10) RETURNING id`,
         [...vals, d.codigo, token]);
       id = r.rows[0].id;
     }
@@ -188,11 +189,13 @@ export async function gravarEntrega(dados) {
        FROM posts WHERE entrega_id=$1`, [id]);
     const porId = Object.fromEntries(antigos.map((p) => [p.id, p]));
     const resumo = { novos: 0, novasVersoes: 0, iguais: 0, removidos: 0 };
+    const alterados = []; // posts novos ou com nova versão (o cliente tem de os rever)
     for (const p of d.posts) {
       const a = porId[p.id];
       // Versão: a indicada, mas nunca abaixo da atual; se o conteúdo mudou, sobe automaticamente.
       const versao = !a ? p.versao || 1 : Math.max(p.versao || 0, mudou(a, p) ? a.versao + 1 : a.versao);
       if (!a) resumo.novos++; else if (versao !== a.versao) resumo.novasVersoes++; else resumo.iguais++;
+      if (!a || versao !== a.versao) alterados.push(p.id);
       await client.query(
         `INSERT INTO posts (entrega_id, id, numero, tipo, rotulo, data_publicacao, versao, alteracoes, capa, slides, video, legenda)
          VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10::jsonb,$11,$12)
@@ -206,7 +209,7 @@ export async function gravarEntrega(dados) {
     resumo.removidos = rem.rowCount;
     await client.query("DELETE FROM respostas WHERE entrega_id=$1 AND NOT (post_id = ANY($2::text[]))", [id, manter]);
     await client.query("COMMIT");
-    return { id, codigo: d.codigo, token, resumo };
+    return { id, codigo: d.codigo, token, resumo, alterados, planilha: d.planilha };
   } catch (e) {
     await client.query("ROLLBACK").catch(() => {});
     if (e.code === "23505") throw new ErroPedido("Conflito ao gravar: tente novamente.", 409);
